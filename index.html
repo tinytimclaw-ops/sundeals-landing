@@ -524,6 +524,29 @@
       return d.toISOString().split('T')[0];
     }
 
+    function dateStrPlus(dateStr, days) {
+      const d = new Date(dateStr);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split('T')[0];
+    }
+
+    // Get URL params
+    function getUrlParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name) || '';
+    }
+
+    // Resolve agent code
+    function getAgent() {
+      const urlAgent = getUrlParam('agent');
+      if (urlAgent) {
+        document.cookie = `agent=${urlAgent}; path=/; max-age=31536000`;
+        return urlAgent;
+      }
+      const cookieAgent = document.cookie.split('; ').find(row => row.startsWith('agent='));
+      return cookieAgent ? cookieAgent.split('=')[1] : 'WY992';
+    }
+
     // Initialize dates
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('checkIn').value = datePlus(1);
@@ -545,22 +568,50 @@
       e.preventDefault();
 
       const depart = document.getElementById('depart').value;
+      const roomType = document.getElementById('roomType').value;
       const checkIn = document.getElementById('checkIn').value;
       const returnDate = document.getElementById('returnDate').value;
 
-      // Build search URL based on product
-      const baseUrl = 'https://www.holidayextras.com';
+      // Get agent, flight, adcode, promotionCode from URL/cookies
+      const agent = getAgent();
+      const flight = getUrlParam('flight') || 'default';
+      const adcode = getUrlParam('adcode');
+      const promotionCode = getUrlParam('promotionCode');
+
+      // Determine basedomain based on environment
+      const host = window.location.host;
+      const isLocal = host.startsWith('127') || host.includes('github.io');
+      const basedomain = isLocal ? 'www.holidayextras.com' : host.replace('www', 'app');
+
+      // Build search URL based on product type
+      let searchUrl = '';
 
       if (currentProduct === 'hotels') {
-        window.location.href = `${baseUrl}/hotels/${depart}?checkin=${checkIn}&checkout=${returnDate}`;
+        // Hotel-only search
+        const checkOut = dateStrPlus(checkIn, 1);
+        const roomCode = roomType === 'double' ? 'D20' : roomType === 'single' ? 'S10' : 'T20';
+        searchUrl = `https://${basedomain}/static/?selectProduct=ho&#/hotel?agent=${agent}&ppts=&customer_ref=&lang=en&depart=${depart}&terminal=&arrive=&flight=${flight}&out=${checkOut}&stay=${checkIn}&room_1=${roomCode}&room_2=&adcode=${adcode}&promotionCode=${promotionCode}`;
       } else if (currentProduct === 'hotel-parking') {
-        window.location.href = `${baseUrl}/hotels-parking/${depart}?checkin=${checkIn}&return=${returnDate}`;
+        // Hotel + Parking search (before trip: hotel check-in, then drop off car next day)
+        const outDate = dateStrPlus(checkIn, 1); // Drop off car day after hotel check-in
+        const inDate = returnDate; // Return date
+        const roomCode = roomType === 'double' ? 'D20' : roomType === 'single' ? 'S10' : 'T20';
+        searchUrl = `https://${basedomain}/static/?selectProduct=hcp&#/hotel_with_parking?agent=${agent}&ppts=0&customer_ref=&lang=en&depart=${depart}&terminal=&arrive=&flight=${flight}&in=${inDate}&out=${outDate}&stay=${checkIn}&room_1=${roomCode}&room_2=&adcode=${adcode}&promotionCode=${promotionCode}`;
       } else if (currentProduct === 'parking') {
-        window.location.href = `${baseUrl}/airport-parking/${depart}?out=${checkIn}&in=${returnDate}`;
+        // Parking-only search
+        const outDate = checkIn;
+        const inDate = returnDate;
+        searchUrl = `https://${basedomain}/static/?selectProduct=cp&#/categories?agent=${agent}&ppts=&customer_ref=&lang=en&adults=2&depart=${depart}&terminal=&arrive=&flight=${flight}&in=${inDate}&out=${outDate}&park_from=06%3A00&park_to=12%3A00&filter_meetandgreet=&filter_parkandride=&children=0&infants=0&redirectReferal=carpark&from_categories=true&adcode=${adcode}&promotionCode=${promotionCode}`;
       } else if (currentProduct === 'lounges') {
-        window.location.href = `${baseUrl}/lounges/${depart}?date=${checkIn}`;
+        // Lounge search
+        searchUrl = `https://${basedomain}/static/?selectProduct=lo&#/lounge?agent=${agent}&ppts=&customer_ref=&lang=en&adults=2&children=0&infants=0&depart=${depart}&terminal=&arrive=&flight=${flight}&from=${checkIn}%2009%3A00&adcode=${adcode}&promotionCode=${promotionCode}`;
       } else if (currentProduct === 'fasttrack') {
-        window.location.href = `${baseUrl}/fast-track/${depart}?date=${checkIn}`;
+        // Fast Track - use lounge URL structure with different selectProduct
+        searchUrl = `https://${basedomain}/static/?selectProduct=ft&#/fasttrack?agent=${agent}&ppts=&customer_ref=&lang=en&adults=2&children=0&infants=0&depart=${depart}&terminal=&arrive=&flight=${flight}&from=${checkIn}%2009%3A00&adcode=${adcode}&promotionCode=${promotionCode}`;
+      }
+
+      if (searchUrl) {
+        window.location.href = searchUrl;
       }
     });
   </script>
