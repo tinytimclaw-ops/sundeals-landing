@@ -414,35 +414,8 @@
         <!-- Search Form -->
         <div class="search-box search-full-width">
           <form id="searchForm">
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">Flying From?</label>
-                <select id="depart" class="form-control">
-                  <option value="LGW">Gatwick</option>
-                  <option value="LHR">Heathrow</option>
-                  <option value="MAN">Manchester</option>
-                  <option value="STN">Stansted</option>
-                  <option value="LTN">Luton</option>
-                  <option value="BHX">Birmingham</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Room Type</label>
-                <select id="roomType" class="form-control">
-                  <option value="double">Double - 2 adults</option>
-                  <option value="single">Single - 1 adult</option>
-                  <option value="twin">Twin - 2 adults</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Hotel check-in (For 1 night)</label>
-                <input type="date" id="checkIn" class="form-control">
-              </div>
-              <div class="form-group">
-                <label class="form-label">When do you return to the UK?</label>
-                <input type="date" id="returnDate" class="form-control">
-              </div>
-              <button type="submit" class="btn-search">Search</button>
+            <div id="formFields" class="form-grid">
+              <!-- Dynamic form fields will be inserted here -->
             </div>
           </form>
         </div>
@@ -547,19 +520,199 @@
       return cookieAgent ? cookieAgent.split('=')[1] : 'WY992';
     }
 
-    // Initialize dates
+    // Build form fields based on product
+    function buildFormFields(product) {
+      const formContainer = document.getElementById('formFields');
+      let html = '';
+
+      // Airport selector (common to all)
+      html += `
+        <div class="form-group">
+          <label class="form-label">Flying From?</label>
+          <select id="depart" class="form-control">
+            <option value="LGW">Gatwick</option>
+            <option value="LHR">Heathrow</option>
+            <option value="MAN">Manchester</option>
+            <option value="STN">Stansted</option>
+            <option value="LTN">Luton</option>
+            <option value="BHX">Birmingham</option>
+          </select>
+        </div>
+      `;
+
+      if (product === 'hotels' || product === 'hotel-parking') {
+        // Hotel fields: room type + check-in date
+        html += `
+          <div class="form-group">
+            <label class="form-label">Room Type</label>
+            <select id="roomType" class="form-control">
+              <option value="double">Double - 2 adults</option>
+              <option value="single">Single - 1 adult</option>
+              <option value="twin">Twin - 2 adults</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hotel check-in (For 1 night)</label>
+            <input type="date" id="checkIn" class="form-control">
+          </div>
+        `;
+      } else if (product === 'parking') {
+        // Parking fields: drop-off date + drop-off time
+        html += `
+          <div class="form-group">
+            <label class="form-label">Drop-off Date</label>
+            <input type="date" id="outDate" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Drop-off Time</label>
+            <select id="outTime" class="form-control">
+              <option value="00:00">Midnight</option>
+              <option value="01:00">1am</option>
+              <option value="02:00">2am</option>
+              <option value="03:00">3am</option>
+              <option value="04:00">4am</option>
+              <option value="05:00">5am</option>
+              <option value="06:00" selected>6am</option>
+              <option value="07:00">7am</option>
+              <option value="08:00">8am</option>
+              <option value="09:00">9am</option>
+              <option value="10:00">10am</option>
+              <option value="11:00">11am</option>
+              <option value="12:00">Noon</option>
+              <option value="13:00">1pm</option>
+              <option value="14:00">2pm</option>
+              <option value="15:00">3pm</option>
+              <option value="16:00">4pm</option>
+              <option value="17:00">5pm</option>
+              <option value="18:00">6pm</option>
+              <option value="19:00">7pm</option>
+              <option value="20:00">8pm</option>
+              <option value="21:00">9pm</option>
+              <option value="22:00">10pm</option>
+              <option value="23:00">11pm</option>
+            </select>
+          </div>
+        `;
+      } else if (product === 'lounges' || product === 'fasttrack') {
+        // Lounge/FastTrack fields: date + time + passengers
+        html += `
+          <div class="form-group">
+            <label class="form-label">Departure Date</label>
+            <input type="date" id="outDate" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Arrival Time</label>
+            <select id="outTime" class="form-control">
+              <option value="06:00">6am</option>
+              <option value="07:00">7am</option>
+              <option value="08:00">8am</option>
+              <option value="09:00" selected>9am</option>
+              <option value="10:00">10am</option>
+              <option value="11:00">11am</option>
+              <option value="12:00">Noon</option>
+              <option value="13:00">1pm</option>
+              <option value="14:00">2pm</option>
+              <option value="15:00">3pm</option>
+              <option value="16:00">4pm</option>
+              <option value="17:00">5pm</option>
+              <option value="18:00">6pm</option>
+              <option value="19:00">7pm</option>
+              <option value="20:00">8pm</option>
+              <option value="21:00">9pm</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Passengers</label>
+            <select id="adults" class="form-control">
+              <option value="1">1 Adult</option>
+              <option value="2" selected>2 Adults</option>
+              <option value="3">3 Adults</option>
+              <option value="4">4 Adults</option>
+              <option value="5">5 Adults</option>
+              <option value="6">6 Adults</option>
+            </select>
+          </div>
+        `;
+      }
+
+      // Return date (for hotel-parking and parking)
+      if (product === 'hotel-parking' || product === 'parking') {
+        html += `
+          <div class="form-group">
+            <label class="form-label">${product === 'parking' ? 'Pick-up Date' : 'Return to UK'}</label>
+            <input type="date" id="returnDate" class="form-control">
+          </div>
+        `;
+      }
+
+      // Add return time for parking
+      if (product === 'parking') {
+        html += `
+          <div class="form-group">
+            <label class="form-label">Pick-up Time</label>
+            <select id="inTime" class="form-control">
+              <option value="00:00">Midnight</option>
+              <option value="01:00">1am</option>
+              <option value="02:00">2am</option>
+              <option value="03:00">3am</option>
+              <option value="04:00">4am</option>
+              <option value="05:00">5am</option>
+              <option value="06:00">6am</option>
+              <option value="07:00">7am</option>
+              <option value="08:00">8am</option>
+              <option value="09:00">9am</option>
+              <option value="10:00">10am</option>
+              <option value="11:00">11am</option>
+              <option value="12:00" selected>Noon</option>
+              <option value="13:00">1pm</option>
+              <option value="14:00">2pm</option>
+              <option value="15:00">3pm</option>
+              <option value="16:00">4pm</option>
+              <option value="17:00">5pm</option>
+              <option value="18:00">6pm</option>
+              <option value="19:00">7pm</option>
+              <option value="20:00">8pm</option>
+              <option value="21:00">9pm</option>
+              <option value="22:00">10pm</option>
+              <option value="23:00">11pm</option>
+            </select>
+          </div>
+        `;
+      }
+
+      // Search button
+      html += `<button type="submit" class="btn-search">Search</button>`;
+
+      formContainer.innerHTML = html;
+
+      // Set default dates after building form
+      if (product === 'hotels' || product === 'hotel-parking') {
+        const checkInField = document.getElementById('checkIn');
+        if (checkInField) checkInField.value = datePlus(1);
+      }
+      if (product === 'parking' || product === 'lounges' || product === 'fasttrack') {
+        const outDateField = document.getElementById('outDate');
+        if (outDateField) outDateField.value = datePlus(1);
+      }
+      if (product === 'hotel-parking' || product === 'parking') {
+        const returnField = document.getElementById('returnDate');
+        if (returnField) returnField.value = datePlus(9);
+      }
+    }
+
+    // Initialize form
+    let currentProduct = 'hotels';
     document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('checkIn').value = datePlus(1);
-      document.getElementById('returnDate').value = datePlus(9);
+      buildFormFields(currentProduct);
     });
 
     // Tab switching
-    let currentProduct = 'hotels';
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', function() {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         this.classList.add('active');
         currentProduct = this.dataset.product;
+        buildFormFields(currentProduct);
       });
     });
 
@@ -568,9 +721,6 @@
       e.preventDefault();
 
       const depart = document.getElementById('depart').value;
-      const roomType = document.getElementById('roomType').value;
-      const checkIn = document.getElementById('checkIn').value;
-      const returnDate = document.getElementById('returnDate').value;
 
       // Get agent, flight, adcode, promotionCode from URL/cookies
       const agent = getAgent();
@@ -588,26 +738,39 @@
 
       if (currentProduct === 'hotels') {
         // Hotel-only search
+        const checkIn = document.getElementById('checkIn').value;
+        const roomType = document.getElementById('roomType').value;
         const checkOut = dateStrPlus(checkIn, 1);
         const roomCode = roomType === 'double' ? 'D20' : roomType === 'single' ? 'S10' : 'T20';
         searchUrl = `https://${basedomain}/static/?selectProduct=ho&#/hotel?agent=${agent}&ppts=&customer_ref=&lang=en&depart=${depart}&terminal=&arrive=&flight=${flight}&out=${checkOut}&stay=${checkIn}&room_1=${roomCode}&room_2=&adcode=${adcode}&promotionCode=${promotionCode}`;
       } else if (currentProduct === 'hotel-parking') {
         // Hotel + Parking search (before trip: hotel check-in, then drop off car next day)
+        const checkIn = document.getElementById('checkIn').value;
+        const returnDate = document.getElementById('returnDate').value;
+        const roomType = document.getElementById('roomType').value;
         const outDate = dateStrPlus(checkIn, 1); // Drop off car day after hotel check-in
         const inDate = returnDate; // Return date
         const roomCode = roomType === 'double' ? 'D20' : roomType === 'single' ? 'S10' : 'T20';
         searchUrl = `https://${basedomain}/static/?selectProduct=hcp&#/hotel_with_parking?agent=${agent}&ppts=0&customer_ref=&lang=en&depart=${depart}&terminal=&arrive=&flight=${flight}&in=${inDate}&out=${outDate}&stay=${checkIn}&room_1=${roomCode}&room_2=&adcode=${adcode}&promotionCode=${promotionCode}`;
       } else if (currentProduct === 'parking') {
         // Parking-only search
-        const outDate = checkIn;
-        const inDate = returnDate;
-        searchUrl = `https://${basedomain}/static/?selectProduct=cp&#/categories?agent=${agent}&ppts=&customer_ref=&lang=en&adults=2&depart=${depart}&terminal=&arrive=&flight=${flight}&in=${inDate}&out=${outDate}&park_from=06%3A00&park_to=12%3A00&filter_meetandgreet=&filter_parkandride=&children=0&infants=0&redirectReferal=carpark&from_categories=true&adcode=${adcode}&promotionCode=${promotionCode}`;
+        const outDate = document.getElementById('outDate').value;
+        const inDate = document.getElementById('returnDate').value;
+        const outTime = document.getElementById('outTime').value.replace(':', '%3A');
+        const inTime = document.getElementById('inTime').value.replace(':', '%3A');
+        searchUrl = `https://${basedomain}/static/?selectProduct=cp&#/categories?agent=${agent}&ppts=&customer_ref=&lang=en&adults=2&depart=${depart}&terminal=&arrive=&flight=${flight}&in=${inDate}&out=${outDate}&park_from=${outTime}%3A00&park_to=${inTime}%3A00&filter_meetandgreet=&filter_parkandride=&children=0&infants=0&redirectReferal=carpark&from_categories=true&adcode=${adcode}&promotionCode=${promotionCode}`;
       } else if (currentProduct === 'lounges') {
         // Lounge search
-        searchUrl = `https://${basedomain}/static/?selectProduct=lo&#/lounge?agent=${agent}&ppts=&customer_ref=&lang=en&adults=2&children=0&infants=0&depart=${depart}&terminal=&arrive=&flight=${flight}&from=${checkIn}%2009%3A00&adcode=${adcode}&promotionCode=${promotionCode}`;
+        const outDate = document.getElementById('outDate').value;
+        const outTime = document.getElementById('outTime').value.replace(':', '%3A');
+        const adults = document.getElementById('adults').value;
+        searchUrl = `https://${basedomain}/static/?selectProduct=lo&#/lounge?agent=${agent}&ppts=&customer_ref=&lang=en&adults=${adults}&children=0&infants=0&depart=${depart}&terminal=&arrive=&flight=${flight}&from=${outDate}%20${outTime}%3A00&adcode=${adcode}&promotionCode=${promotionCode}`;
       } else if (currentProduct === 'fasttrack') {
         // Fast Track - use lounge URL structure with different selectProduct
-        searchUrl = `https://${basedomain}/static/?selectProduct=ft&#/fasttrack?agent=${agent}&ppts=&customer_ref=&lang=en&adults=2&children=0&infants=0&depart=${depart}&terminal=&arrive=&flight=${flight}&from=${checkIn}%2009%3A00&adcode=${adcode}&promotionCode=${promotionCode}`;
+        const outDate = document.getElementById('outDate').value;
+        const outTime = document.getElementById('outTime').value.replace(':', '%3A');
+        const adults = document.getElementById('adults').value;
+        searchUrl = `https://${basedomain}/static/?selectProduct=ft&#/fasttrack?agent=${agent}&ppts=&customer_ref=&lang=en&adults=${adults}&children=0&infants=0&depart=${depart}&terminal=&arrive=&flight=${flight}&from=${outDate}%20${outTime}%3A00&adcode=${adcode}&promotionCode=${promotionCode}`;
       }
 
       if (searchUrl) {
