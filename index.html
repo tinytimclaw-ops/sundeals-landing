@@ -76,6 +76,12 @@
     }
 
     .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .hero-top {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 60px;
@@ -147,13 +153,14 @@
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 32px;
+      width: 100%;
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, 1fr) auto;
       gap: 16px;
-      margin-bottom: 20px;
+      align-items: end;
     }
 
     .form-group {
@@ -194,10 +201,16 @@
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
+      padding: 0 32px;
+      white-space: nowrap;
     }
 
     .btn-search:hover {
       background: #333;
+    }
+
+    .search-full-width {
+      width: 100%;
     }
 
     /* Products Section */
@@ -317,7 +330,7 @@
 
     /* Responsive */
     @media (max-width: 992px) {
-      .hero-content {
+      .hero-top {
         grid-template-columns: 1fr;
       }
 
@@ -331,6 +344,10 @@
 
       .form-grid {
         grid-template-columns: repeat(2, 1fr);
+      }
+
+      .btn-search {
+        grid-column: 1 / -1;
       }
     }
 
@@ -346,6 +363,10 @@
 
       .form-grid {
         grid-template-columns: 1fr;
+      }
+
+      .btn-search {
+        grid-column: auto;
       }
 
       .powered-by {
@@ -369,46 +390,61 @@
   <section class="hero">
     <div class="container">
       <div class="hero-content">
-        <div class="hero-text">
-          <h1 class="hero-title">BUILD YOUR HOLIDAY</h1>
-          <div class="hero-subtitle">Great prices on finishing touches</div>
-
-          <!-- Tabs -->
-          <div class="tabs">
-            <button class="tab active">Airport Hotels</button>
-            <button class="tab">Airport Hotels & Parking</button>
-            <button class="tab">Airport Parking</button>
-            <button class="tab">Airport Lounges</button>
-            <button class="tab">Fast Track</button>
-            <button class="tab">Manage My Booking</button>
+        <div class="hero-top">
+          <div class="hero-text">
+            <h1 class="hero-title">BUILD YOUR HOLIDAY</h1>
+            <div class="hero-subtitle">Great prices on finishing touches</div>
           </div>
 
-          <!-- Search Form -->
-          <div class="search-box">
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">Flying From?</label>
-                <input type="text" class="form-control" placeholder="Gatwick" value="Gatwick">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Room Type</label>
-                <input type="text" class="form-control" value="Double - 2 adults">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Hotel check-in (For 1 night)</label>
-                <input type="date" class="form-control" value="2026-06-08">
-              </div>
-              <div class="form-group">
-                <label class="form-label">When do you return to the UK?</label>
-                <input type="date" class="form-control" value="2026-06-09">
-              </div>
-            </div>
-            <button class="btn-search">Search</button>
+          <div class="hero-image">
+            <img src="assets/sundeals-hero.png" alt="Beach umbrella">
           </div>
         </div>
 
-        <div class="hero-image">
-          <img src="assets/sundeals-hero.png" alt="Beach umbrella">
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab active" data-product="hotels">Airport Hotels</button>
+          <button class="tab" data-product="hotel-parking">Airport Hotels & Parking</button>
+          <button class="tab" data-product="parking">Airport Parking</button>
+          <button class="tab" data-product="lounges">Airport Lounges</button>
+          <button class="tab" data-product="fasttrack">Fast Track</button>
+          <button class="tab" data-product="manage">Manage My Booking</button>
+        </div>
+
+        <!-- Search Form -->
+        <div class="search-box search-full-width">
+          <form id="searchForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Flying From?</label>
+                <select id="depart" class="form-control">
+                  <option value="LGW">Gatwick</option>
+                  <option value="LHR">Heathrow</option>
+                  <option value="MAN">Manchester</option>
+                  <option value="STN">Stansted</option>
+                  <option value="LTN">Luton</option>
+                  <option value="BHX">Birmingham</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Room Type</label>
+                <select id="roomType" class="form-control">
+                  <option value="double">Double - 2 adults</option>
+                  <option value="single">Single - 1 adult</option>
+                  <option value="twin">Twin - 2 adults</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Hotel check-in (For 1 night)</label>
+                <input type="date" id="checkIn" class="form-control">
+              </div>
+              <div class="form-group">
+                <label class="form-label">When do you return to the UK?</label>
+                <input type="date" id="returnDate" class="form-control">
+              </div>
+              <button type="submit" class="btn-search">Search</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -481,12 +517,51 @@
   </footer>
 
   <script>
+    // Date helpers
+    function datePlus(days) {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split('T')[0];
+    }
+
+    // Initialize dates
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('checkIn').value = datePlus(1);
+      document.getElementById('returnDate').value = datePlus(9);
+    });
+
     // Tab switching
+    let currentProduct = 'hotels';
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', function() {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         this.classList.add('active');
+        currentProduct = this.dataset.product;
       });
+    });
+
+    // Form submission
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const depart = document.getElementById('depart').value;
+      const checkIn = document.getElementById('checkIn').value;
+      const returnDate = document.getElementById('returnDate').value;
+
+      // Build search URL based on product
+      const baseUrl = 'https://www.holidayextras.com';
+
+      if (currentProduct === 'hotels') {
+        window.location.href = `${baseUrl}/hotels/${depart}?checkin=${checkIn}&checkout=${returnDate}`;
+      } else if (currentProduct === 'hotel-parking') {
+        window.location.href = `${baseUrl}/hotels-parking/${depart}?checkin=${checkIn}&return=${returnDate}`;
+      } else if (currentProduct === 'parking') {
+        window.location.href = `${baseUrl}/airport-parking/${depart}?out=${checkIn}&in=${returnDate}`;
+      } else if (currentProduct === 'lounges') {
+        window.location.href = `${baseUrl}/lounges/${depart}?date=${checkIn}`;
+      } else if (currentProduct === 'fasttrack') {
+        window.location.href = `${baseUrl}/fast-track/${depart}?date=${checkIn}`;
+      }
     });
   </script>
 </body>
