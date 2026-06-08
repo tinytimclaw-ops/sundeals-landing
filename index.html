@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>sundeals - Build Your Holiday</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      color: #000;
+      background: #fff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    .header {
+      background: #fff;
+      padding: 20px 0;
+      position: relative;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      color: #000;
+      letter-spacing: -1px;
+    }
+
+    .logo-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: #FFD700;
+      border-radius: 50%;
+      margin-left: 2px;
+      vertical-align: middle;
+    }
+
+    .powered-by {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #542E91;
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Hero */
+    .hero {
+      background: #fff;
+      padding: 60px 0 40px;
+      position: relative;
+    }
+
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-text {
+      max-width: 500px;
+    }
+
+    .hero-title {
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 0.95;
+      color: #000;
+      margin-bottom: 16px;
+      letter-spacing: -2px;
+    }
+
+    .hero-subtitle {
+      background: #FFD700;
+      color: #000;
+      font-size: 20px;
+      font-weight: 700;
+      padding: 8px 16px;
+      display: inline-block;
+      margin-bottom: 32px;
+    }
+
+    .hero-image {
+      position: relative;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab:hover, .tab.active {
+      background: #FFD700;
+      border-color: #FFD700;
+      color: #000;
+    }
+
+    /* Search Form */
+    .search-box {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 32px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      height: 44px;
+      padding: 0 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #000;
+      background: #fff;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #FFD700;
+    }
+
+    .btn-search {
+      height: 44px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-search:hover {
+      background: #333;
+    }
+
+    /* Products Section */
+    .products-section {
+      padding: 60px 0;
+      background: #fff;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 48px;
+    }
+
+    .section-title .logo-text {
+      font-weight: 900;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      background: #fff;
+      border: 4px solid #FFD700;
+      border-radius: 12px;
+      padding: 32px;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
+    }
+
+    .product-text {
+      flex: 1;
+    }
+
+    .product-title {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1;
+      color: #000;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .product-description {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .product-image {
+      width: 140px;
+      height: 140px;
+      flex-shrink: 0;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Price Match */
+    .price-match {
+      background: #f9f9f9;
+      padding: 24px;
+      margin: 60px 0 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .price-badge {
+      width: 80px;
+      height: 80px;
+      background: #90EE90;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.2;
+      padding: 8px;
+      flex-shrink: 0;
+    }
+
+    .price-text {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .footer {
+      background: #f5f5f5;
+      padding: 40px 0;
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        font-size: 56px;
+      }
+
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-title {
+        font-size: 42px;
+      }
+
+      .product-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .powered-by {
+        position: static;
+        display: inline-block;
+        margin-top: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="logo">sundeals<span class="logo-dot"></span></div>
+      <div class="powered-by">Powered by HolidayExtras</div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">BUILD YOUR HOLIDAY</h1>
+          <div class="hero-subtitle">Great prices on finishing touches</div>
+
+          <!-- Tabs -->
+          <div class="tabs">
+            <button class="tab active">Airport Hotels</button>
+            <button class="tab">Airport Hotels & Parking</button>
+            <button class="tab">Airport Parking</button>
+            <button class="tab">Airport Lounges</button>
+            <button class="tab">Fast Track</button>
+            <button class="tab">Manage My Booking</button>
+          </div>
+
+          <!-- Search Form -->
+          <div class="search-box">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Flying From?</label>
+                <input type="text" class="form-control" placeholder="Gatwick" value="Gatwick">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Room Type</label>
+                <input type="text" class="form-control" value="Double - 2 adults">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Hotel check-in (For 1 night)</label>
+                <input type="date" class="form-control" value="2026-06-08">
+              </div>
+              <div class="form-group">
+                <label class="form-label">When do you return to the UK?</label>
+                <input type="date" class="form-control" value="2026-06-09">
+              </div>
+            </div>
+            <button class="btn-search">Search</button>
+          </div>
+        </div>
+
+        <div class="hero-image">
+          <img src="assets/sundeals-hero.png" alt="Beach umbrella">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section class="products-section">
+    <div class="container">
+      <h2 class="section-title">See more from <span class="logo-text">sundeals<span class="logo-dot"></span></span></h2>
+
+      <div class="products-grid">
+        <!-- Airport Hotels -->
+        <div class="product-card">
+          <div class="product-text">
+            <h3 class="product-title">AIRPORT<br>HOTELS</h3>
+            <p class="product-description">If you have an early flight, an airport hotel can make the whole difference. Arrive stress-free, get a proper night's sleep and skip the bleary eyed early start.</p>
+          </div>
+          <div class="product-image">
+            <img src="assets/sundeals-hotels.png" alt="Hotels">
+          </div>
+        </div>
+
+        <!-- Airport Lounges -->
+        <div class="product-card">
+          <div class="product-text">
+            <h3 class="product-title">AIRPORT<br>LOUNGES</h3>
+            <p class="product-description">A calmer place to wait before you fly. Airport lounges give you a quiet space to relax, complimentary drinks and a bit of breathing space away from the crowds.</p>
+          </div>
+          <div class="product-image">
+            <img src="assets/sundeals-lounges.png" alt="Lounges">
+          </div>
+        </div>
+
+        <!-- Fast Track -->
+        <div class="product-card">
+          <div class="product-text">
+            <h3 class="product-title">FAST<br>TRACK</h3>
+            <p class="product-description">If you'd rather spend less time queuing, fast track security helps you move through the airport quickly via a priority lane.</p>
+          </div>
+          <div class="product-image">
+            <img src="assets/sundeals-fasttrack.png" alt="Fast Track">
+          </div>
+        </div>
+
+        <!-- Airport Parking -->
+        <div class="product-card">
+          <div class="product-text">
+            <h3 class="product-title">AIRPORT<br>PARKING</h3>
+            <p class="product-description">Choose what works for you - park close to the terminal or go for a meet and greet service where someone parks the car for you.</p>
+          </div>
+          <div class="product-image">
+            <img src="assets/sundeals-parking.png" alt="Parking">
+          </div>
+        </div>
+      </div>
+
+      <!-- Price Match -->
+      <div class="price-match">
+        <div class="price-badge">EXTRA BEATS<br>ON PRICES</div>
+        <p class="price-text">You can be confident that sundeals will never be beaten but in the unlikely event you find the same product for less somewhere else, we will match the price, guaranteed. *Terms and conditions apply.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 sundeals. Powered by Holiday Extras. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
